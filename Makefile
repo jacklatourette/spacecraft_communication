@@ -1,6 +1,6 @@
 
 deploy:
-	docker-compose up -d --scale worker=3;
+	docker compose up --scale worker=3;
 
 undeploy:
 	docker rm -f $(shell docker ps -a -q);

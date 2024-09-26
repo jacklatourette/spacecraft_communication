@@ -18,7 +18,7 @@ services:
       - 8001:8001
   worker:
     build: ./
-    command: celery -A data_ingestor.tasks worker --concurrency=3 --loglevel=info
+    command: celery -A data_ingestor.tasks worker --concurrency=1 --loglevel=info
     # command: tail -f /dev/null
     volumes:
       - ./:/app
@@ -53,3 +53,12 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
+  locust:
+    image: locustio/locust
+    ports:
+      - "0.0.0.0:8089:8089"
+    volumes:
+      - ./locustfile.py:/locustfile.py
+    command: -f /locustfile.py
+    depends_on:
+      - scheduler
