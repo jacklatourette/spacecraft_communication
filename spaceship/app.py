@@ -24,7 +24,6 @@ class StartStream(BaseModel):
     """Model for starting a stream."""
     host: str
     port: int
-    interval: int
 
 
 app = FastAPI()
@@ -45,14 +44,13 @@ def streaming_task(stream_payload: StartStream, event_key: str):
     with streaming_semaphore:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         while not stop_stream_tracker[event_key].is_set():
+            payload = json.dumps(generate_response_payload()).encode()
             try:
-                payload = json.dumps(generate_response_payload()).encode()
                 sock.sendto(payload, (stream_payload.host, stream_payload.port))
             except Exception as e:
-                logger.error(f"Error while sending payload to {stream_payload.host}:{stream_payload.port}: {e}")
-            else:
-                logger.info(f"Payload sent to {stream_payload.host}:{stream_payload.port} successully")
-            sleep(stream_payload.interval)
+                logger.error(
+                    f"Error while sending payload to {stream_payload.host}:{stream_payload.port}: {e}"
+                )
         sock.close()
         stop_stream_tracker.pop(event_key)
         logger.info(f"Stream ended for {stream_payload.host}:{stream_payload.port}")
@@ -62,6 +60,7 @@ def streaming_task(stream_payload: StartStream, event_key: str):
 async def get_stream():
     """Get the number of active streams."""
     return {"active_streams": stop_stream_tracker.keys()}
+
 
 @app.post("/stream/")
 async def start_stream(start_stream: StartStream, background_tasks: BackgroundTasks):

@@ -15,10 +15,10 @@ from tenacity import (
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 app = Celery("tasks", broker="pyamqp://user:password@rabbitmq:5672//")
-redis_client = redis.Redis(host="redis", port=6379, db=1)
+redis_client = redis.StrictRedisRedis(host="redis", port=6379, db=1)
 udp_port = 1001
+
 
 @retry(
     stop=stop_after_attempt(5),
@@ -26,12 +26,12 @@ udp_port = 1001
     reraise=True,
     retry=retry_if_exception_type(requests.RequestException),
 )
-def start_stream(port: int, interval: int = 2) -> str:
+def start_stream(port: int) -> str:
     """Start streaming data to a given host."""
     host = environ.get("HOSTNAME")
     response = requests.post(
         "http://spaceship:8001/stream/",
-        json={"host": f"{host}", "port": port, "interval": interval},
+        json={"host": f"{host}", "port": port},
     )
     response.raise_for_status()
     return response.json()["event_key"]
@@ -67,12 +67,12 @@ def stream_data(ship_name: str, start_time: str, duration: int):
     """Stream data to a given host over UDP."""
     logger.info(f"Streaming data from {ship_name}")
     start_time = datetime.fromisoformat(start_time)
-    interval = 2
 
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
     udp_socket.bind(("0.0.0.0", udp_port))
-    udp_socket.settimeout(interval + 1)
-    stream_key = start_stream(udp_port, interval)
+    udp_socket.settimeout(5)
+    stream_key = start_stream(udp_port)
     while datetime.now(timezone.utc) < start_time + timedelta(seconds=int(duration)):
         # Receive data from the UDP socket.
         data, _ = udp_socket.recvfrom(1024)

@@ -2,6 +2,15 @@
 deploy:
 	docker compose up --scale worker=3;
 
+deploy-scheduler:
+	docker compose up scheduler;
+
+deploy-spaceship:
+	docker compose up spaceship;
+
+deploy-ingestor:
+	docker compose up worker;
+
 undeploy:
 	docker rm -f $(shell docker ps -a -q);
 

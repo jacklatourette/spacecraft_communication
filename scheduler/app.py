@@ -8,17 +8,25 @@ from sqlmodel import Field, Session, select
 from scheduler.db import BaseModel, create_db_and_tables, engine
 from data_ingestor.tasks import stream_data
 
-# Was going to use an array but it's not thread safe
-stop_event = {}
-
 
 class Scheduler(BaseModel, table=True):
     """Model for scheduled communications."""
+
     id: int | None = Field(default=None, primary_key=True)
-    ship_name: str = Field(index=True, nullable=False, description="Name of the spaceship.")
-    start_time: datetime = Field(nullable=False, gt=datetime.now(timezone.utc), description="Start time for scheduled communication.")
-    duration: int = Field(nullable=False, gt=0, description="The duration of the stream in seconds.")
-    task_id: str | None = Field(default=None, description="Task ID for the scheduled communication.")
+    ship_name: str = Field(
+        index=True, nullable=False, description="Name of the spaceship."
+    )
+    start_time: datetime = Field(
+        nullable=False,
+        gt=datetime.now(timezone.utc),
+        description="Start time for scheduled communication.",
+    )
+    duration: int = Field(
+        nullable=False, gt=0, description="The duration of the stream in seconds."
+    )
+    task_id: str | None = Field(
+        default=None, description="Task ID for the scheduled communication."
+    )
 
     @field_validator("start_time")
     @classmethod
@@ -29,7 +37,7 @@ class Scheduler(BaseModel, table=True):
             raise ValueError("Start time must be greater than current time")
         else:
             return value
-    
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -58,7 +66,10 @@ def create_event(scheduler: Scheduler):
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=f"{str(e)}")
     else:
-        task = stream_data.apply_async(eta=scheduler.start_time, args=(scheduler.ship_name, scheduler.start_time, scheduler.duration))
+        task = stream_data.apply_async(
+            eta=scheduler.start_time,
+            args=(scheduler.ship_name, scheduler.start_time, scheduler.duration),
+        )
         scheduler.task_id = task.id
         with Session(engine) as session:
             session.add(scheduler)
