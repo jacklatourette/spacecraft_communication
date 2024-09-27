@@ -1,0 +1,171 @@
+{
+	"info": {
+		"_postman_id": "96560d8b-6b9c-45f5-91a1-1a8960261fe4",
+		"name": "Space Communication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38491201"
+	},
+	"item": [
+		{
+			"name": "Create Schedule",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ship_name\": \"FirstShip\",\n    \"start_time\": \"2024-09-25T22:49:10.342210+00:00\",\n    \"duration\": \"15\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/scheduler/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scheduler",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Schedule",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/scheduler/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scheduler",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start Stream",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"host\": \"127.0.0.1\",\n    \"port\": 1001,\n    \"interval\": 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/stream/start/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"stream",
+						"start",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Stop Stream",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/stream/stop/?event_key=e62d72f0-c754-4de8-95d9-b673f0fc6708",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"stream",
+						"stop",
+						""
+					],
+					"query": [
+						{
+							"key": "event_key",
+							"value": "e62d72f0-c754-4de8-95d9-b673f0fc6708"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "health check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/healthcheck/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"healthcheck",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Streams",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8001/stream/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"stream",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

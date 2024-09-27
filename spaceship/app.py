@@ -59,7 +59,7 @@ def streaming_task(stream_payload: StartStream, event_key: str):
 @app.get("/stream/")
 async def get_stream():
     """Get the number of active streams."""
-    return {"active_streams": stop_stream_tracker.keys()}
+    return {"number_of_active_streams": len(stop_stream_tracker.keys())}
 
 
 @app.post("/stream/")
