@@ -16,7 +16,7 @@ from tenacity import (
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 app = Celery("tasks", broker="pyamqp://user:password@rabbitmq:5672//")
-redis_client = redis.StrictRedisRedis(host="redis", port=6379, db=1)
+redis_client = redis.StrictRedis(host="redis", port=6379, db=1)
 udp_port = 1001
 
 

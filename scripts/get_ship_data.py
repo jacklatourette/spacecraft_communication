@@ -1,7 +1,7 @@
 import redis
 
 
-redis_client = redis.Redis(host="redis", port=6379, db=1)
+redis_client = redis.StrictRedis(host="redis", port=6379, db=1)
 
 
 def get_ship_data():
